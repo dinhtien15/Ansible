@@ -26,4 +26,4 @@ Các thành phần trong Ansible
 - Tasks : Là những công việc nhỏ trong Playbooks. Nếu đổi chỗ thứ tự các tasks thì sẽ gây ảnh hưởng nếu những tasks đó có liên quan với nhau. Vậy nên chú ý viết thứ tự các nhiệm vụ trong tasks
 - Inventory : Khai báo địa chỉ server cần được setup, đây là nơi chứa tên các server hay địa chỉ mà mình muốn thực thi.
 - Modules : Những chức năng cho việc thực thi task dễ dàng và đa dạng. Một vài module thường dùng : Commands,files,firewalld,system,... người dùng có thể viết các module của riêng họ. Module có thể được thực thi trực tiếp trên máy chủ từ xa hoặc thông qua playbooks
-- Role: là một tập playbook 
+- Role: là một tập playbook được định nghĩa sẵn để thực thi một tác vụ nhất định
