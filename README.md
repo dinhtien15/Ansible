@@ -3,6 +3,10 @@ Báo cáo tìm hiểu Ansible
 Ansible là gì?
 - Là 1 platform open source giúp giảm thiểu việc phải thao tác cài đặt giống nhau trên nhiều VPS
 - VD có 10 VPS cần cài Python thay vì truy cập vào từng VPS và gõ lệnh cài , ta chỉ cần cấu hình và đứng ở Ansible server gửi lệnh cài Python lên 10 VPS đó
+- Ansible không yêu cầu người dùng phải cài đặt thêm bất kỳ phần mềm đặc biệt nào. Một máy điều khiển được cài đặt tích hợp trong phần mền Ansible, và giao tiếp với các nút thông qua SSH tiêu chuẩn
+
+Kiến trúc
+- Ansible sử dụng kiến trúc Agentless không cần đến Agent để giao tiếp với các máy khác. vd : ssh trên linux, Winrm trên Windows
 
 Hoạt động : Mình sẽ đứng trên 1 node control hay thường được đặt là Ansible server và ra lệnh cho các server mà mình quản lý
 - Gửi các lệnh cài đặt đến một cụm các server được khai báo trong /etc/ansible/hosts, tuy nhiên vấn đề đặt ra số lượng thao tác cần thực hiện lớn , không thể gõ tay nhiều lệnh
@@ -22,4 +26,4 @@ Các thành phần trong Ansible
 - Tasks : Là những công việc nhỏ trong Playbooks. Nếu đổi chỗ thứ tự các tasks thì sẽ gây ảnh hưởng nếu những tasks đó có liên quan với nhau. Vậy nên chú ý viết thứ tự các nhiệm vụ trong tasks
 - Inventory : Khai báo địa chỉ server cần được setup, đây là nơi chứa tên các server hay địa chỉ mà mình muốn thực thi.
 - Modules : Những chức năng cho việc thực thi task dễ dàng và đa dạng. Một vài module thường dùng : Commands,files,firewalld,system,... người dùng có thể viết các module của riêng họ. Module có thể được thực thi trực tiếp trên máy chủ từ xa hoặc thông qua playbooks
-- 
+- Role: là một tập playbook 
