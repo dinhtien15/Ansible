@@ -1,9 +1,10 @@
 # Ansible
 Báo cáo tìm hiểu Ansible
-Ansible là gì?
+Ansible là gì? , Ansible dùng để làm gì?
 - Là 1 platform open source giúp giảm thiểu việc phải thao tác cài đặt giống nhau trên nhiều VPS
 - VD có 10 VPS cần cài Python thay vì truy cập vào từng VPS và gõ lệnh cài , ta chỉ cần cấu hình và đứng ở Ansible server gửi lệnh cài Python lên 10 VPS đó
 - Ansible không yêu cầu người dùng phải cài đặt thêm bất kỳ phần mềm đặc biệt nào. Một máy điều khiển được cài đặt tích hợp trong phần mền Ansible, và giao tiếp với các nút thông qua SSH tiêu chuẩn
+- Ansible giúp cấu hình server theo tùy biến rất đa dạng, giảm thiểu thời gian thao tác trên từng server được cài đặt
 
 Kiến trúc
 - Ansible sử dụng kiến trúc Agentless không cần đến Agent để giao tiếp với các máy khác. vd : ssh trên linux, Winrm trên Windows
@@ -22,8 +23,10 @@ Tại sao nên sử dụng :
 - Cộng đồng tương tác lớn
 
 Các thành phần trong Ansible 
-- Playbooks : Là nơi khai báo các kịch bản để chạy cho các server. Trong playbooks sẽ chứa một tập hợp các activities hay các tasks sẽ được chạy trên một hay một nhóm server
+- Playbooks : Là nơi khai báo các kịch bản để chạy cho các server. Trong playbooks sẽ chứa một tập hợp các activities hay các tasks sẽ được chạy trên một hay một nhóm server. Khi admin cần setup server/service nào chỉ cần gọi file yml này ra , tất cả sẽ được thực thi một cách tự động
+ - File YAML: Hầu hết tất cả playbooks trong Ansible được viết bằng file YAML.
+ - Jinja2: Ansible sử dụng Jinja2 templating để cho phép biếu thức động và truy cập vào các biến. Ansible bao gồm rất nhiều 
 - Tasks : Là những công việc nhỏ trong Playbooks. Nếu đổi chỗ thứ tự các tasks thì sẽ gây ảnh hưởng nếu những tasks đó có liên quan với nhau. Vậy nên chú ý viết thứ tự các nhiệm vụ trong tasks
 - Inventory : Khai báo địa chỉ server cần được setup, đây là nơi chứa tên các server hay địa chỉ mà mình muốn thực thi.
 - Modules : Những chức năng cho việc thực thi task dễ dàng và đa dạng. Một vài module thường dùng : Commands,files,firewalld,system,... người dùng có thể viết các module của riêng họ. Module có thể được thực thi trực tiếp trên máy chủ từ xa hoặc thông qua playbooks
-- Role: là một tập playbook được định nghĩa sẵn để thực thi một tác vụ nhất định
+- Role: là một tập playbook được định nghĩa sẵn để thực thi một tác vụ nhất định. Nếu bạn có nhiều server hay nhiều group server và mỗi server thực hiện những tasks riêng biệt. Khi này nếu viết tất cả vào cùng 1 file playbook thì khá là xấu code và khó để quản lý. Ansible cung cấp sẵn role , về đơn giản nó sẽ giúp bạn phân chia khu vực với  nhiệm vụ riêng biệt
