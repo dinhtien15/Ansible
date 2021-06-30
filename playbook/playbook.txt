@@ -1,5 +1,5 @@
 ---
-- hosts: centos7
+- hosts: solrcloud
   become: True
   tasks:
   - name: Enable SELinux
@@ -151,7 +151,7 @@
       path: /etc/default/solr.in.sh
       block: |
         SOLR_JAVA_MEM="-Xms{{ directory_i_need.stdout }}M -Xmx{{ directory_i_need.stdout }}M"
-        ZK_HOST="{% for host in groups['centos7'] %}
+        ZK_HOST="{% for host in groups['solrcloud'] %}
         {{ host }}:2181
         {%- if not loop.last %},{% endif %}
         {% endfor %}"
