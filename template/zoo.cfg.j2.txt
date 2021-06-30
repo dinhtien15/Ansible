@@ -2,6 +2,6 @@ dataDir=/opt/zookeeper/data
 clientPort=2181
 initLimit=5
 syncLimit=2
-{% for host in groups['centos7'] %}
+{% for host in groups['solrcloud'] %}
 server.{{ loop.index }}={{ host }}:2888:3888
 {% endfor %}
