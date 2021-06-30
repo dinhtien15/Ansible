@@ -1,4 +1,4 @@
-{% for host in groups['centos7'] %}
+{% for host in groups['solrcloud'] %}
 {% if host == inventory_hostname %}
 {{ loop.index }}
 {% endif %}
