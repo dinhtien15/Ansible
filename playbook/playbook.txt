@@ -1,0 +1,159 @@
+---
+- hosts: centos7
+  become: True
+  tasks:
+  - name: Enable SELinux
+    selinux:
+      policy: targeted
+      state: enforcing
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+  - name: Reboot a Linux machine
+    reboot:
+      reboot_timeout: 200
+  - name: install epel-release
+    yum:
+      name: epel-release
+      state: present
+  - name: install net-tools
+    yum:
+      name: net-tools
+      state: present
+  - name: ensure a list of packages installed
+    yum:
+       name: "{{ packages }}"
+    vars:
+      packages:
+      - nano
+      - wget
+      - telnet
+      - htop
+      - iotop
+      - java-1.8.0-openjdk
+  - name: open port
+    firewalld:
+      zone: public
+      port: '{{item}}'
+      state: enabled
+      permanent: True
+      immediate: True
+    become: Yes
+    with_items:
+    - 2181/tcp
+    - 3888/tcp
+    - 2888/tcp
+    - 8983/tcp
+  - name: reload firewalld
+    shell: firewall-cmd --reload
+  - name: addgroup zookeeper
+    group:
+	  name: zookeeper
+	  state: present
+  - name: add user zookeeper
+    user:
+      name: zookeeper
+      state: present
+      shell: /opt/zookeeper
+      shell: /sbin/nologin
+  - name: Download zookeeper
+    get_url:
+      url: https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz
+      dest: /opt
+  - name: extract zookeeper
+    unarchive:
+      src: /opt/zookeeper-3.4.14.tar.gz
+      dest: /opt
+      remote_src: yes
+  - name: mv
+    shell: mv /opt/zookeeper-3.4.14/* /opt/zookeeper
+  - name: delete
+    shell: rm -rf /opt/zookeeper-3.4.14
+  - name: Creates directory
+    file:
+      path: /opt/zookeeper/data
+      state: directory
+  - name: tao file myid
+    template:
+      src: /root/example.j2
+      dest: /opt/zookeeper/data/myid
+  - name: tao file zoo.cfg
+    template:
+      src: /root/example2.j2
+      dest: /opt/zookeeper/conf/zoo.cfg
+  - name: phan quyen cho zookeeper
+    shell: chown -R zookeeper:zookeeper /opt/zookeeper/*
+  - name: tao file service zookeeper.service
+    file:
+      path: "/usr/lib/systemd/system/zookeeper.service"
+      state: touch
+  - name: Create file zoo.cfg and edit
+    copy:
+      dest: "/usr/lib/systemd/system/zookeeper.service"
+      content: |
+        [Unit]
+        Description=Zookeeper Service
+
+        [Service]
+        Type=simple
+        WorkingDirectory=/opt/zookeeper/
+        PIDFile=/opt/zookeeper/data/zookeeper_server.pid
+        SyslogIdentifier=zookeeper
+        User=zookeeper
+        Group=zookeeper
+        ExecStart=/opt/zookeeper/bin/zkServer.sh start
+        ExecStop=/opt/zookeeper/bin/zkServer.sh stop
+        Restart=always
+        TimeoutSec=20
+        SuccessExitStatus=130 143
+        Restart=on-failure
+
+        [Install]
+        WantedBy=multi-user.target
+  - name: restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: crond
+  - name: start zookeeper.service
+    shell: systemctl start zookeeper
+  - name: enable service zookeeper and ensure it is not masked
+    systemd:
+      name: zookeeper.service
+      enabled: yes
+      masked: no
+  - name: Insert limits solr 
+    blockinfile:
+      path: /etc/security/limits.conf
+      block: |
+        solr             soft    nproc           65000
+        solr             soft    nofile          65000
+        solr             hard    nproc           65000
+        solr             hard    nofile          65000
+  - name: Download SOLR
+    get_url:
+      url: http://archive.apache.org/dist/lucene/solr/8.2.0/solr-8.2.0.tgz
+      dest: /root
+  - name: cd
+    shell: cd
+  - name: EXTRACT SOLR
+    shell: tar xzf solr-8.2.0.tgz solr-8.2.0/bin/install_solr_service.sh --strip-components=2
+  
+  - name: RUN SOLR
+    shell: sudo bash ./install_solr_service.sh solr-8.2.0.tgz -d /home/solr  -n
+  - name: get memory
+    shell: awk '/MemTotal/ {print (substr($2,1,length($2)-1)/2)}' /proc/meminfo >> /etc/default/test.txt
+  - name: test
+    shell : cat /etc/default/test.txt
+    register: directory_i_need
+  - name: Insert limits solr
+    blockinfile:
+      path: /etc/default/solr.in.sh
+      block: |
+        SOLR_JAVA_MEM="-Xms{{ directory_i_need.stdout }}M -Xmx{{ directory_i_need.stdout }}M"
+        ZK_HOST="{% for host in groups['centos7'] %}
+        {{ host }}:2181
+        {%- if not loop.last %},{% endif %}
+        {% endfor %}"
+  - name: start service solr
+    shell: service solr start
