@@ -53,9 +53,15 @@
   - name: add user zookeeper
     user:
       name: zookeeper
-      state: present
-      shell: /opt/zookeeper
       shell: /sbin/nologin
+      group: zookeeper
+      state: present
+  - name: create directory /opt/zookeeper
+    file:
+      path: /opt/zookeeper
+      owner: zookeeper
+      group: zookeeper
+      mode: '0777'
   - name: Download zookeeper
     get_url:
       url: https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz
