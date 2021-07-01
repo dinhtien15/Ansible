@@ -71,8 +71,12 @@
       src: /opt/zookeeper-3.4.14.tar.gz
       dest: /opt
       remote_src: yes
-  - name: mv
-    shell: mv /opt/zookeeper-3.4.14/* /opt/zookeeper
+  - name: khong biet
+    stat: path=/opt/zookeeper-3.4.14
+    register: zoo_stat
+  - name: move all file /opt/zookeeper-3.4.14/* to /opt/zookeeper
+    command: mv /opt/zookeeper-3.4.14/* /opt/zookeeper
+    when: not zoo_stat.stat.exists
   - name: delete
     shell: rm -rf /opt/zookeeper-3.4.14
   - name: Creates directory
