@@ -69,16 +69,8 @@
   - name: extract zookeeper
     unarchive:
       src: /opt/zookeeper-3.4.14.tar.gz
-      dest: /opt
+      dest: /opt/zookeeper
       remote_src: yes
-  - name: khong biet
-    stat: path=/opt/zookeeper-3.4.14
-    register: zoo_stat
-  - name: move all file /opt/zookeeper-3.4.14/* to /opt/zookeeper
-    command: mv /opt/zookeeper-3.4.14/* /opt/zookeeper
-    when: not zoo_stat.stat.exists
-  - name: delete
-    shell: rm -rf /opt/zookeeper-3.4.14
   - name: Creates directory
     file:
       path: /opt/zookeeper/data
@@ -87,10 +79,10 @@
     template:
       src: /root/example.j2
       dest: /opt/zookeeper/data/myid
-  - name: tao file zoo.cfg
+  - name: Creates file zoo.cfg
     template:
       src: /root/example2.j2
-      dest: /opt/zookeeper/conf/zoo.cfg
+      dest: /opt/zookeeper/zookeeper-3.4.14/conf/zoo.cfg
   - name: phan quyen cho zookeeper
     shell: chown -R zookeeper:zookeeper /opt/zookeeper/*
   - name: tao file service zookeeper.service
@@ -111,8 +103,8 @@
         SyslogIdentifier=zookeeper
         User=zookeeper
         Group=zookeeper
-        ExecStart=/opt/zookeeper/bin/zkServer.sh start
-        ExecStop=/opt/zookeeper/bin/zkServer.sh stop
+        ExecStart=/opt/zookeeper/zookeeper-3.4.14/bin/zkServer.sh start
+        ExecStop=/opt/zookeeper/zookeeper-3.4.14/bin/zkServer.sh stop
         Restart=always
         TimeoutSec=20
         SuccessExitStatus=130 143
