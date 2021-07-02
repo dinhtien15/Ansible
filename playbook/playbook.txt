@@ -98,7 +98,7 @@
 
         [Service]
         Type=simple
-        WorkingDirectory=/opt/zookeeper/
+        WorkingDirectory=/opt/zookeeper/zookeeper-3.4.14
         PIDFile=/opt/zookeeper/data/zookeeper_server.pid
         SyslogIdentifier=zookeeper
         User=zookeeper
