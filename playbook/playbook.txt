@@ -144,7 +144,7 @@
   - name: RUN SOLR
     shell: sudo bash ./install_solr_service.sh solr-8.2.0.tgz -d /home/solr  -n
   - name: get memory
-    shell: awk '/MemTotal/ {print (substr($2,1,length($2))/2)}' /proc/meminfo >> /etc/default/test.txt
+    shell: awk '/MemTotal/ {print (substr($2,1,length($2))/2)}' /proc/meminfo > /etc/default/test.txt
   - name: push memory info to test.txt
     shell : cat /etc/default/test.txt
     register: directory_i_need
