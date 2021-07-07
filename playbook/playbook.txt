@@ -62,6 +62,7 @@
       owner: zookeeper
       group: zookeeper
       mode: '0777'
+      state: directory
   - name: Download zookeeper
     get_url:
       url: https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz
@@ -77,11 +78,11 @@
       state: directory
   - name: tao file myid
     template:
-      src: /root/example.j2
+      src: /root/myid.j2
       dest: /opt/zookeeper/data/myid
   - name: Creates file zoo.cfg
     template:
-      src: /root/example2.j2
+      src: /root/zoo.cfg.j2
       dest: /opt/zookeeper/zookeeper-3.4.14/conf/zoo.cfg
   - name: phan quyen cho zookeeper
     shell: chown -R zookeeper:zookeeper /opt/zookeeper/*
@@ -145,6 +146,7 @@
     shell: sudo bash ./install_solr_service.sh solr-8.2.0.tgz -d /home/solr  -n
   - name: get memory
     shell: awk '/MemTotal/ {print (substr($2,1,length($2))/2)}' /proc/meminfo > /etc/default/test.txt
+#echo $(($(awk '/MemTotal/ {print $2}' /proc/meminfo)/2048))
   - name: push memory info to test.txt
     shell : cat /etc/default/test.txt
     register: directory_i_need
