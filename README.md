@@ -5,7 +5,7 @@ Hostname		OS			IP
 AnsibleServer		Centos7			.....
 Client1			Centos7			192.168.80.124
 Client2			Centos7			192.168.80.125
-Client3			Centos7			192.168.80.12
+Client3			Centos7			192.168.80.126
 ```
 
 B1. Cài đặt Ansible trên node Ansible Server
