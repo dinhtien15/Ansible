@@ -82,6 +82,7 @@ touch zoo.cfg.j2
 ```
 
 B6. Chạy playbook với lệnh
+```
 ansible-playbook -i inventory.ini playbook.yml
 ```
 
