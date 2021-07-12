@@ -1,32 +1,69 @@
-# Ansible
-Báo cáo tìm hiểu Ansible
-Ansible là gì? , Ansible dùng để làm gì?
-- Là 1 platform open source giúp giảm thiểu việc phải thao tác cài đặt giống nhau trên nhiều VPS
-- VD có 10 VPS cần cài Python thay vì truy cập vào từng VPS và gõ lệnh cài , ta chỉ cần cấu hình và đứng ở Ansible server gửi lệnh cài Python lên 10 VPS đó
-- Ansible không yêu cầu người dùng phải cài đặt thêm bất kỳ phần mềm đặc biệt nào. Một máy điều khiển được cài đặt tích hợp trong phần mền Ansible, và giao tiếp với các nút thông qua SSH tiêu chuẩn
-- Ansible giúp cấu hình server theo tùy biến rất đa dạng, giảm thiểu thời gian thao tác trên từng server được cài đặt
+Hướng dẫn cài đặt
 
-Kiến trúc
-- Ansible sử dụng kiến trúc Agentless không cần đến Agent để giao tiếp với các máy khác. vd : ssh trên linux, Winrm trên Windows
+IP Planning
+Hostname		OS			IP
+AnsibleServer		Centos7			.....
+Client1			Centos7			192.168.80.124
+Client2			Centos7			192.168.80.125
+Client3			Centos7			192.168.80.12
 
-Hoạt động : Mình sẽ đứng trên 1 node control hay thường được đặt là Ansible server và ra lệnh cho các server mà mình quản lý
-- Gửi các lệnh cài đặt đến một cụm các server được khai báo trong /etc/ansible/hosts, tuy nhiên vấn đề đặt ra số lượng thao tác cần thực hiện lớn , không thể gõ tay nhiều lệnh
-- Khi đó cần viết 1 playbooks - chứa tất cả những gì muốn làm với các server từ xa kia , mỗi thao tác trong playbooks được gọi là 1 task(setup, start,stop,..), sử dụng các module để tạo thành task ( ví dụ muốn cài đặt 1 gói trên centos7 ta sdung module yum)
-- giờ ta cần truyền thông tin chi tiết hơn về server cho Playbook chứ không thì làm sao nó biết sẽ làm việc với ai. Lúc này ta cần đến Inventory.
-- Iventory giúp khai báo chi tiết các server mà mình sẽ quản lý và làm việc cùng
 
-Tại sao nên sử dụng :
-- là 1 open source
-- chạy bằng phương thức ssh
-- cài đặt không tốn nhiều tài nguyên
-- Script thường được dùng định dạng YAML
-- Cộng đồng tương tác lớn
+B1. Cài đặt Ansible trên node Ansible Server
+yum install -y epel-release 
+yum update -y
+yum install -y ansible
 
-Các thành phần trong Ansible 
-- Playbooks : Là nơi khai báo các kịch bản để chạy cho các server. Trong playbooks sẽ chứa một tập hợp các activities hay các tasks sẽ được chạy trên một hay một nhóm server. Khi admin cần setup server/service nào chỉ cần gọi file yml này ra , tất cả sẽ được thực thi một cách tự động
- - File YAML: Hầu hết tất cả playbooks trong Ansible được viết bằng file YAML.
- - Jinja2: Ansible sử dụng Jinja2 templating để cho phép biếu thức động và truy cập vào các biến. Ansible bao gồm rất nhiều 
-- Tasks : Là những công việc nhỏ trong Playbooks. Nếu đổi chỗ thứ tự các tasks thì sẽ gây ảnh hưởng nếu những tasks đó có liên quan với nhau. Vậy nên chú ý viết thứ tự các nhiệm vụ trong tasks
-- Inventory : Khai báo địa chỉ server cần được setup, đây là nơi chứa tên các server hay địa chỉ mà mình muốn thực thi.
-- Modules : Những chức năng cho việc thực thi task dễ dàng và đa dạng. Một vài module thường dùng : Commands,files,firewalld,system,... người dùng có thể viết các module của riêng họ. Module có thể được thực thi trực tiếp trên máy chủ từ xa hoặc thông qua playbooks
-- Role: là một tập playbook được định nghĩa sẵn để thực thi một tác vụ nhất định. Nếu bạn có nhiều server hay nhiều group server và mỗi server thực hiện những tasks riêng biệt. Khi này nếu viết tất cả vào cùng 1 file playbook thì khá là xấu code và khó để quản lý. Ansible cung cấp sẵn role , về đơn giản nó sẽ giúp bạn phân chia khu vực với  nhiệm vụ riêng biệt
+B2. Cấu hình SSH Key
+Đứng tại user root của node AnsibleServer và thực hiện bước tạo key: ssh-keygen
+
+Thực hiện các thao tác Enter và để mặc định các tùy chọn
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:ialESG10iMjC8ppgMWh46DaB34s7iuFwbUCB6a0FDP4 root@ansibleserver
+The key's randomart image is:
++---[RSA 2048]----+
+|X=o+...          |
+|%@oo+.           |
+|*=Oo.            |
+|.B++.  o .       |
+|+o=E..o S        |
+|o..+..           |
+|o ..+            |
+|+oo.             |
+|oo .             |
++----[SHA256]-----+
+
+Thực hiện copy file key sang các node còn lại: ssh-copy-id root@[ip lần lượt của các client]
+
+B3. Tạo và khai báo file inventory.ini
+Bình thường sẽ tạo file dạng như này: 
+[solrcloud]
+client1 ansible_host=192.168.80.124 ansible_port=22 ansible_user=root
+client2 ansible_host=192.168.80.125 ansible_port=22 ansible_user=root
+client3 ansible_host=192.168.80.126 ansible_port=22 ansible_user=root
+
+Nhưng do trong phần cài đặt này gồm cả file j2 nên sẽ viết theo cách ở dưới để thuận tiện cho việc file j2 chạy
+[solrcloud]
+192.168.80.124
+192.168.80.125
+192.168.80.126
+
+
+
+B4. Sử dụng một số lệnh kiểm tra cơ bản 
+Để xem bạn đã khai báo đúng chưa : ansible all -m ping
+-> trả lại đủ số client bạn đã khai báo với màu xanh lá cây thì ok
+-> không trả lại đủ số client với chữ màu đỏ thì ktra lại
+
+B5. Tạo 2 file j2 có tên myid.j2 và zoo.cfg.j2 ở bên trên trong đường dẫn /root/ vì mình viết playbook ở đường dẫn này
+
+B6. Chạy playbook với lệnh : ansible-playbook -i inventory.ini playbook.yml
+
+
+
+
