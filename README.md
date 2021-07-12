@@ -1,11 +1,11 @@
 Hướng dẫn cài đặt
 ```
 IP Planning
-Hostname		OS			IP
-AnsibleServer		Centos7			.....
-Client1			Centos7			192.168.80.124
-Client2			Centos7			192.168.80.125
-Client3			Centos7			192.168.80.126
+Hostname		      OS			               IP
+AnsibleServer		  Centos7			          192.168.80.123
+Client1			      Centos7			          192.168.80.124
+Client2			      Centos7			          192.168.80.125
+Client3			      Centos7			          192.168.80.126
 ```
 
 B1. Cài đặt Ansible trên node Ansible Server
@@ -42,8 +42,12 @@ The key's randomart image is:
 |oo .             |
 +----[SHA256]-----+
 ```
-Thực hiện copy file key sang các node còn lại: ssh-copy-id root@[ip lần lượt của các client]
-
+Thực hiện copy file key sang các node còn lại
+```
+ssh-copy-id root@192.168.80.124
+ssh-copy-id root@192.168.80.125
+ssh-copy-id root@192.168.80.126
+```
 B3. Tạo và khai báo file inventory.ini
 Bình thường sẽ tạo file dạng như này: 
 ```
@@ -71,9 +75,13 @@ ansible all -m ping
 -> không trả lại đủ số client với chữ màu đỏ thì ktra lại
 
 B5. Tạo 2 file j2 có tên myid.j2 và zoo.cfg.j2 ở bên trên trong đường dẫn /root/ vì mình viết playbook ở đường dẫn này
+```
+cd /root
+touch myid.j2
+touch zoo.cfg.j2
+```
 
 B6. Chạy playbook với lệnh
-```
 ansible-playbook -i inventory.ini playbook.yml
 ```
 
