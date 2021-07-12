@@ -1,22 +1,24 @@
 Hướng dẫn cài đặt
-
+```
 IP Planning
 Hostname		OS			IP
 AnsibleServer		Centos7			.....
 Client1			Centos7			192.168.80.124
 Client2			Centos7			192.168.80.125
 Client3			Centos7			192.168.80.12
-
+```
 
 B1. Cài đặt Ansible trên node Ansible Server
+```
 yum install -y epel-release 
 yum update -y
 yum install -y ansible
-
+```
 B2. Cấu hình SSH Key
 Đứng tại user root của node AnsibleServer và thực hiện bước tạo key: ssh-keygen
 
 Thực hiện các thao tác Enter và để mặc định các tùy chọn
+```
 Generating public/private rsa key pair.
 Enter file in which to save the key (/root/.ssh/id_rsa):
 Enter passphrase (empty for no passphrase):
@@ -37,22 +39,24 @@ The key's randomart image is:
 |+oo.             |
 |oo .             |
 +----[SHA256]-----+
-
+```
 Thực hiện copy file key sang các node còn lại: ssh-copy-id root@[ip lần lượt của các client]
 
 B3. Tạo và khai báo file inventory.ini
 Bình thường sẽ tạo file dạng như này: 
+```
 [solrcloud]
 client1 ansible_host=192.168.80.124 ansible_port=22 ansible_user=root
 client2 ansible_host=192.168.80.125 ansible_port=22 ansible_user=root
 client3 ansible_host=192.168.80.126 ansible_port=22 ansible_user=root
-
+```
 Nhưng do trong phần cài đặt này gồm cả file j2 nên sẽ viết theo cách ở dưới để thuận tiện cho việc file j2 chạy
+```
 [solrcloud]
 192.168.80.124
 192.168.80.125
 192.168.80.126
-
+```
 
 
 B4. Sử dụng một số lệnh kiểm tra cơ bản 
