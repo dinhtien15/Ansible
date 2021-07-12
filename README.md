@@ -15,8 +15,10 @@ yum update -y
 yum install -y ansible
 ```
 B2. Cấu hình SSH Key
-Đứng tại user root của node AnsibleServer và thực hiện bước tạo key: ssh-keygen
-
+Đứng tại user root của node AnsibleServer và thực hiện bước tạo key: 
+```
+ssh-keygen
+```
 Thực hiện các thao tác Enter và để mặc định các tùy chọn
 ```
 Generating public/private rsa key pair.
@@ -60,14 +62,20 @@ Nhưng do trong phần cài đặt này gồm cả file j2 nên sẽ viết theo
 
 
 B4. Sử dụng một số lệnh kiểm tra cơ bản 
-Để xem bạn đã khai báo đúng chưa : ansible all -m ping
+Để xem bạn đã khai báo đúng chưa 
+```
+ansible all -m ping
+```
+
 -> trả lại đủ số client bạn đã khai báo với màu xanh lá cây thì ok
 -> không trả lại đủ số client với chữ màu đỏ thì ktra lại
 
 B5. Tạo 2 file j2 có tên myid.j2 và zoo.cfg.j2 ở bên trên trong đường dẫn /root/ vì mình viết playbook ở đường dẫn này
 
-B6. Chạy playbook với lệnh : ansible-playbook -i inventory.ini playbook.yml
-
+B6. Chạy playbook với lệnh
+```
+ansible-playbook -i inventory.ini playbook.yml
+```
 
 
 
